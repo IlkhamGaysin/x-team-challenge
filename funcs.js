@@ -76,15 +76,27 @@ module.exports.findInbox = function (db, encodedName) {
  */
 module.exports.findNextMessage = function (inbox, lastHash) {
   // find the message which comes after lastHash
-  var found
+  var foundMessage
   for (var i = 0; i < inbox.messages.length; i += 1) {
     if (inbox.messages[i].lastHash === lastHash) {
-      found = i
+      foundMessage = inbox.messages[i]
       break
     }
   }
+  return foundMessage
+}
 
+/**
+ * Print the next message
+ *
+ * (<Object>, <Object> }, string): string
+ */
+
+module.exports.printMessage = function (inbox, message) {
   // read and decode the message
-  return 'from: ' + decode(inbox.messages[found].from) + '\n---\n' +
-    decode(fs.readFile(path.join(inbox.dir, inbox.messages[found].hash), 'utf8'))
+  fs.readFile(path.join(inbox.dir, message.hash), 'utf8', function(err, data) {
+    messageText = 'from: ' + decode(message.from) + '\n---\n' + decode(data)
+
+    return console.log(messageText)
+  })
 }
